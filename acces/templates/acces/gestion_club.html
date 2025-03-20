@@ -1,0 +1,81 @@
+<!-- acces/templates/acces/gestion_club.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion du Club</title>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .menu-item {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 18px;
+            color: #007bff;
+            text-align: center;
+            text-decoration: none;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .menu-item:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        /* Style pour le bouton de déconnexion en rouge, centré, avec écart */
+        .menu-item-red {
+            display: block;
+            margin: 20px auto 10px; /* Écart supplémentaire en haut */
+            padding: 10px;
+            font-size: 18px;
+            color: #ff4d4f; /* Couleur du texte rouge */
+            text-align: center;
+            text-decoration: none;
+            border: 1px solid #ff4d4f; /* Bordure rouge */
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            background-color: transparent; /* Fond transparent au départ */
+            width: 100%; /* Largeur pour centrer le bouton */
+        }
+        .menu-item-red:hover {
+            background-color: #ff4d4f; /* Fond rouge au survol */
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gestion de {{ club.nom }}</h1>
+        
+        <!-- Section pour afficher les demandes -->
+        <a href="{% url 'acces:club_demandes' club.id %}" class="menu-item">Voir les Demandes</a>
+        
+        <!-- Section pour gérer d'autres fonctionnalités du club -->
+        <a href="{% url 'acces:liste_tickets' %}" class="menu-item">Voir les Tickets</a>
+        
+        <!-- Formulaire de déconnexion avec style rouge et écart en haut -->
+        <form method="post" action="{% url 'logout' %}" style="text-align: center;">
+            {% csrf_token %}
+            <button type="submit" class="menu-item-red">Déconnexion</button>
+        </form>
+    </div>
+</body>
+</html>

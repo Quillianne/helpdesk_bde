@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Demande d'Accès</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px; /* Taille de police réduite */
+            margin: 1cm; /* Réduction des marges */
+        }
+        .header {
+            text-align: left;
+        }
+        .content {
+            margin-top: 1.5cm;
+        }
+        .signature {
+            margin-top: 1.5cm;
+            text-align: right;
+        }
+        .signature-details {
+            display: inline-block;
+            text-align: left; /* Alignement à gauche du nom dans le bloc signature */
+            margin-right: 0px; /* Espace pour éloigner légèrement le texte de la signature */
+        }
+        .date {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <p>{{ president.prenom }} {{ president.nom }}</p>
+        <p>Président du Bureau Des Élèves</p>
+        <p>2 rue François Verny</p>
+        <p>29200 BREST Cedex 9</p>
+        <p>Mail : {{ president.email }}</p>
+        <p>Port. : {{ president.numero }}</p>
+    </div>
+
+    <p class="date">Fait à Brest, le {{ demande.date_creation|date:"d/m/Y" }}</p>
+
+    <div class="content">
+        <h3>Nouvelle liste d’accès aux clés du club {{ demande.club.nom }} :</h3>
+
+        <p>Monsieur Da Cunha,</p>
+        <p>Veuillez trouver ci-dessous la nouvelle liste des personnes ayant accès aux clés des locaux du club <strong>{{ demande.club.nom }}</strong> :</p>
+
+        <p><strong>Locaux concernés :</strong></p>
+        <ul>
+            {% for local in demande.locaux.all %}
+            <li>{{ local.nom }}</li>
+            {% endfor %}
+        </ul>
+
+        <p><strong>Personnes concernées :</strong></p>
+        <ul>
+            {% for personne in demande.personnes.all %}
+            <li>{{ personne.prenom }} {{ personne.nom }}</li>
+            {% endfor %}
+        </ul>
+
+        <p>Cette liste prendra effet dès validation de votre part.</p>
+        <p>En espérant une réponse positive de votre part, je vous prie de croire, Monsieur Da Cunha, en l’assurance de mes sentiments respectueux.</p>
+    </div>
+
+    <div class="signature">
+        <div class="signature-details">
+            <p>{{ president.prenom }} {{ president.nom }}</p>
+            {% if signature_url %}
+                <img src="file://{{ signature_url }}" alt="Signature du président" style="width: 200px; height: auto;">
+            {% else %}
+                <p>(Signature non disponible)</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

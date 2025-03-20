@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Demandes pour {{ club.nom }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        p.description {
+            font-size: 16px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        ul li {
+            background-color: #e9ecef;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        strong {
+            color: #333;
+        }
+        .demand-actions a {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            margin-left: 10px;
+        }
+        .demand-actions a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Demandes pour le club {{ club.nom }}</h1>
+        
+        <!-- Description de la page -->
+        <p class="description">
+            Cette page permet de voir les demandes d'accès aux clés d'un local. Vous pouvez ajouter, supprimer, et gérer les personnes ayant accès aux locaux.
+        </p>
+
+        <!-- Liste des demandes avec noms des locaux -->
+        <ul>
+            {% for demande in demandes %}
+                <li>
+                    <div>
+                        <strong>Demande #{{ demande.id }} - Locaux : 
+                            {% for local in demande.locaux.all %}
+                                {{ local.nom }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </strong><br>
+                        Statut : {{ demande.get_statut_display }}
+                    </div>
+                    <div class="demand-actions">
+                        <a href="{% url 'acces:modifier_demande' demande.id %}">Modifier</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <!-- Conteneur des boutons de création et de retour -->
+        <div class="btn-container">
+            <a href="{% url 'acces:nouvelle_demande' club.id %}" class="btn">Créer une nouvelle demande</a>
+            <a href="{% url 'acces:menu_principal' %}" class="btn">Retour au Menu Principal</a>
+        </div>
+        
+    </div>
+</body>
+</html>

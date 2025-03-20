@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails de la soirée</title>
+    
+    <!-- Inclusion de Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Inclusion de jQuery et Select2 JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- Style personnalisé -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .messages {
+            list-style: none;
+            padding: 0;
+        }
+        .messages li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .messages li.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .messages li.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .form-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        form {
+            width: 100%;
+            max-width: 500px;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        ul.participants {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        ul.participants li {
+            display: flex;
+            justify-content: space-between;
+            background-color: #e9ecef;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .participant-name {
+            font-weight: bold;
+        }
+        .participant-promotion {
+            font-style: italic;
+        }
+        .confirmation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .confirmation-buttons button {
+            width: 100px;
+        }
+        /* Bouton Supprimer spécifique */
+        .btn-supprimer {
+            width: auto;
+            padding: 5px 10px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+        .btn-supprimer:hover {
+            background-color: #c82333;
+        }
+        /* Boîte de couleur pour les participants */
+        .box {
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            border: 2px solid #007bff;
+        }
+        .box h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        /* Style pour le bouton Export CSV */
+        .btn-export {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background-color: #28a745; /* Vert pour l'export CSV */
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn-export:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>{{ soiree.nom }} - {{ soiree.date }}</h1>
+
+        <!-- Bloc d'affichage des messages -->
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="{% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <!-- Confirmation si nécessaire -->
+        {% if show_confirmation %}
+        <div class="form-container">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="cotisant_id" value="{{ cotisant.id }}">
+                <div class="confirmation-buttons">
+                    <button type="submit" name="confirm_add_as_exterieur" value="yes">Oui</button>
+                    <a href="{% url 'events:detail_soiree' soiree.id %}">
+                        <button type="button">Non</button>
+                    </a>
+                </div>
+            </form>
+        </div>
+        {% endif %}
+
+        
+
+        <h2>Ajouter un participant :</h2>
+        <div class="form-container">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="box">
+                    <h3>Cotisants</h3>
+                    <label for="cotisant">Rechercher un cotisant :</label>
+                    <select class="autocomplete" name="cotisant" id="cotisant"></select>
+                </div>
+
+                <!-- Section pour ajouter un participant extérieur -->
+                <div class="box">
+                    <h3>Extérieur</h3>
+                    <input type="text" name="nom" placeholder="Nom de l'extérieur">
+                    <input type="text" name="prenom" placeholder="Prénom de l'extérieur">
+                </div>
+
+                <button type="submit">Ajouter</button>
+            </form>
+        </div>
+<!-- Compteurs de participants -->
+<h2>Total des participants : {{ nombre_total }} ({{ nombre_cotisants }} cotisants | {{ nombre_exterieurs }} extérieurs)</h2>
+
+
+<ul class="participants">
+    {% for participant in participants %}
+        <li>
+            <div class="participant-info">
+                <span class="participant-name">
+                    {% if participant.cotisant %}
+                        {{ participant.cotisant.nom }} {{ participant.cotisant.prenom }}
+                    {% else %}
+                        {{ participant.nom }} {{ participant.prenom }}
+                    {% endif %}
+                </span>
+                <span class="participant-promotion">
+                    {% if participant.cotisant %}
+                        ({{ participant.cotisant.promotion }})
+                    {% else %}
+                        ({{ participant.statut }})
+                    {% endif %}
+                </span>
+            </div>
+            <!-- Bouton pour supprimer le participant -->
+            <form method="POST" action="{% url 'events:supprimer_participant' participant.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn-supprimer">Supprimer</button>
+            </form>
+        </li>
+    {% endfor %}
+</ul>
+        <!-- Bouton d'exportation visible uniquement par les administrateurs -->
+        {% if user.is_staff %}
+        <center><a href="{% url 'events:export_participants_csv' soiree.id %}" class="btn btn-export">Exporter en CSV</a></center>
+        {% endif %}
+
+    </div>
+
+    <!-- Script pour activer l'autocomplétion avec Select2 -->
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('.autocomplete').select2({
+            ajax: {
+                url: "{% url 'events:cotisant_autocomplete' %}",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        term: params.term  // Le terme recherché
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: $.map(data.results, function (item) {
+                            return {
+                                id: item.id,
+                                text: item.nom + " " + item.prenom + " (" + item.promotion + ")"
+                            };
+                        })
+                    };
+                },
+                cache: true
+            },
+            placeholder: 'Cherchez un cotisant par nom ou prénom',
+            minimumInputLength: 1
+        });
+    });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique des soirées</title>
+    
+    <!-- Style personnalisé -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 18px;
+            text-align: center;
+            color: #666;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        ul li {
+            background-color: #e9ecef;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        ul li:hover {
+            background-color: #dcdcdc;
+        }
+        ul li a {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 18px;
+        }
+        ul li a:hover {
+            color: #0056b3;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 10px 20px;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-size: 16px;
+            text-align: center;
+        }
+        .btn-add {
+            background-color: #28a745;
+        }
+        .btn-add:hover {
+            background-color: #218838;
+        }
+        .btn-refresh {
+            background-color: #007bff;
+        }
+        .btn-refresh:hover {
+            background-color: #0056b3;
+        }
+        .btn-login {
+            background-color: #ff7f50;
+        }
+        .btn-login:hover {
+            background-color: #e67342;
+        }
+        /* Style pour les messages */
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+        .messages li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .messages li.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .messages li.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Historique des soirées</h1>
+
+        <!-- Gestion des messages -->
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <!-- Vérifier si l'utilisateur est un admin -->
+        {% if user.is_authenticated and user.is_staff %}
+            <!-- Affichage des soirées pour les administrateurs -->
+            <ul>
+                {% for soiree in soirees %}
+                    <li><a href="{% url 'events:detail_soiree' soiree.id %}">{{ soiree.nom }} - {{ soiree.date }}</a></li>
+                {% endfor %}
+            </ul>
+
+            <!-- Boutons d'ajout de soirée et de retour au menu principal -->
+            <div class="btn-container">
+                <a href="{% url 'events:ajouter_soiree' %}" class="btn btn-add">Ajouter une nouvelle soirée</a>
+                <a href="{% url 'acces:menu_principal' %}" class="btn btn-refresh">Retour au Menu Principal</a>
+            </div>
+        {% else %}
+            <!-- Message pour les non-administrateurs -->
+            <p>Bienvenue sur notre plateforme de gestion des soirées !</p>
+            <p>Si vous êtes un organisateur d'événements, vous devriez avoir reçu un lien vers votre soirée, ainsi qu'un identifiant pour accéder à celle-ci.</p>
+            <p>Cette plateforme permet de gérer les accès aux événements en toute simplicité. Pour toute question, contactez l'organisateur de l'événement.</p>
+
+            <!-- Bouton pour se connecter en tant qu'administrateur -->
+            <div class="btn-container" style="justify-content: center;">
+                <a href="{% url 'login' %}" class="btn btn-login">Se connecter en tant qu'administrateur</a>
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
