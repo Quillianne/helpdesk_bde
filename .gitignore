@@ -5,3 +5,4 @@ __pycache__/
 venv
 .venv
 credentials.json
+gestion_soiree.sock
